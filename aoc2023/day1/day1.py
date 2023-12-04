@@ -1,5 +1,5 @@
 import re
-from aoc2023 import utils
+import utils
 
 number_map = {
     'zero': '0',

@@ -1,6 +1,5 @@
-import sys
 import re
-from aoc2023 import utils
+import utils
 
 
 def part1(data):
