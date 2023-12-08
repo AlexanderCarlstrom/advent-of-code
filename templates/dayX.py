@@ -1,14 +1,16 @@
 import sys
 import re
+import utils
+import math
 
 
-def part1(data):
+def solve_p1():
     return ''
 
 
-def part2(data):
+def solve_p2():
     return ''
 
 
-print('Part 1: ' + str(part1("")))
-print('Part 2: ' + str(part2("")))
+print('Part 1:', solve_p1())
+print('Part 2:', solve_p2())
