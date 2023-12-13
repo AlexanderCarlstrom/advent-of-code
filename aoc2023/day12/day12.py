@@ -1,17 +1,23 @@
 import utils
+import re
 
 
-def generate_variants(group):
-    if '?' not in group:
-        return [group]
+def generate_variants(input_line):
+    if '?' not in input_line:
+        return [input_line]
 
-    template_index = group.index('?')
-    variants = []
+    template_index = input_line.index('?')
+    line_variants = []
     for ch in '.#':
-        variant = group.replace('?', ch, 1)
-        variants.extend(generate_variants(variant))
+        variant = input_line.replace('?', ch, 1)
+        line_variants.extend(generate_variants(variant))
 
-    return variants
+    return line_variants
+
+
+keys = {}
+def gen_variants(dots, groups, i, gi, gl):
+
 
 
 def count_groups(input_row):
@@ -31,20 +37,26 @@ def count_groups(input_row):
 
 
 D = utils.parse_single_string('ex.txt')
-possibles = []
-for line in D[0:1]:
+p1 = 0
+p2 = 0
+for line in D:
     row, groups = line.split(' ')
     groups = [int(g) for g in groups.split(',')]
 
-    possible = 0
-    for v in generate_variants(row):
-        group_count = count_groups(v)
-        print(v)
-        if group_count == groups:
-            possible += 1
+    variants = generate_variants(row)
+    base_possible = len(list(filter(lambda v: count_groups(v) == groups, variants)))
+    possible = 1
 
-    possibles.append(possible)
+    if all(char in '#?' for char in row[len(row) - groups[-1]:]):
+        possible = base_possible
+    else:
+        possible = len(list(filter(lambda v: count_groups(v) == groups, generate_variants('?' + row))))
 
-print('Part 1:', sum(possibles))
+    print(base_possible * pow(possible, 4))
 
-print(len(generate_variants('.??..??...?##')))
+    p1 += base_possible
+    p2 += base_possible * pow(possible, 4)
+
+
+print('Part 1:', p1)
+print('Part 2:', p2)
