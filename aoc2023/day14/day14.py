@@ -63,62 +63,51 @@ def solve_p1():
     print('Part 1:', points)
 
 
-def get_next(r, c, direction):
-    if direction == 'N':
-        return tuple([r - 1, c])
-    if direction == 'W':
-        return tuple([r, c - 1])
-    if direction == 'S':
-        return tuple([r + 1, c])
-    if direction == 'E':
-        return tuple([r, c + 1])
+def print_grid(grid):
+    for line in grid:
+        print(''.join(line))
+    print('')
+    print('--------------------------')
+    print('')
+
+
+def flatten_grid(grid):
+    return '\n'.join([''.join(row) for row in grid])
 
 
 def solve_p2():
-    D = open('ex.txt').read().strip().split('\n')
-    grid = [[ch for ch in row] for row in D]
+    grid = open('in.txt').read().strip().split('\n')
+    grid = [[ch for ch in row] for row in grid]
     R = len(grid)
     C = len(grid[0])
-    stones = []
-    for r, row in enumerate(grid):
-        for c, ch in enumerate(row):
-            if ch == 'O':
-                grid[r][c] = '.'
-                stones.append((r, c))
 
-    print(1)
+    flat = flatten_grid(grid)
+    seen = {flat}
+    array = [flat]
+    while True:
+        move_north(grid)
+        move_west(grid)
+        move_south(grid)
+        move_east(grid)
 
-    for cycle in range(1):
-        for d in ['N', 'W', 'S', 'E']:
-            for s in range(len(stones)):
-                (r, c) = stones[s]
+        flat = flatten_grid(grid)
+        if flat in seen:
+            break
 
-                can_move = True
-                while can_move:
-                    (r, c) = get_next(r, c, d)
-                    print('first', r, c)
-                    print('next', d, r, c)
-                    if 0 <= r < R and 0 <= c < C:
-                        if grid[r][c] not in '#O':
-                            stones[s] = (r, c)
-                        else:
-                            can_move = False
+        seen.add(flat)
+        array.append(flat)
 
-    print(2)
+    start = array.index(flat)
+    end = len(seen)
 
-    for s in range(len(stones)):
-        (r, c) = stones[s]
-        grid[r][c] = 'O'
-
-    for line in grid:
-        print(''.join(line))
+    grid = array[(1000000000 - start) % (end - start) + start].split('\n')
 
     points = 0
     for r, line in enumerate(grid):
         counter = Counter(line)['O']
         points += counter * (R - r)
 
-    print('Part 2:', points)
+    print('Part 1:', points)
 
 
 solve_p1()
