@@ -29,11 +29,10 @@ def solve_p2():
 
     boxes = []
     for i in range(0, 256):
-        boxes.append(defaultdict(list))
+        boxes.append(defaultdict(int))
     for ins in instructions:
         chars, sep, v = re.search(r'([a-z]+)([=\-])(\d*)', ins).groups()
         box = 0
-        print(chars, sep, v)
 
         for ch in chars:
             box += ord(ch)
@@ -41,25 +40,22 @@ def solve_p2():
             box = box % 256
 
         if sep == '-':
-            print('del', box)
-            if boxes[box][chars]:
+            if chars in boxes[box]:
                 del boxes[box][chars]
         elif sep == '=':
-            print('add', box)
             if boxes[box][chars]:
-                boxes[box][chars][0] = int(v)
+                boxes[box][chars] = int(v)
             else:
-                boxes[box][chars] = [int(v), len(boxes[box])]
+                boxes[box][chars] = int(v)
 
     power = 0
     for i, box in enumerate(boxes):
         if len(box) > 0:
-            items = sorted(box.items(), key=lambda item: item[1])
-            print(items)
-            for j, lens in enumerate(items):
-                power += (i + 1) * (j + 1) * lens[1][0]
+            for j, lens in enumerate(box.items()):
+                power += (i + 1) * (j + 1) * lens[1]
 
     print('Part 2:', power)
 
 
+solve_p1()
 solve_p2()
