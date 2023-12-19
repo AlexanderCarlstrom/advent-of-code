@@ -1,6 +1,7 @@
 import sys
 import re
 import operator
+import functools
 
 
 def parse():
@@ -71,14 +72,52 @@ def solve_p1():
     print('Part 1:', accepted)
 
 
-def solve_p2():
-    workflows, _ = parse()
+def count_variations(workflows, item, name):
+    if name == 'R':
+        return 0
+    if name == 'A':
+        return functools.reduce(lambda a, b: a*b, [rg[1] - rg[0] + 1 for rg in item.values()])
+
     variations = 0
 
-    for workflow in workflows.items():
-        for inst in workflow[1]:
-            item = {'x': 4000, 'm': 4000, 'a': 4000, 's': 4000}
-            print(inst)
+    for inst in workflows[name]:
+        if isinstance(inst, str):
+            variations += count_variations(workflows, item, inst)
+        else:
+            v, op, n, w = inst
+            inside, outside = (0, 0), (0, 0)
+            if op == '<':
+                inside = (item[v][0], n - 1)
+                outside = (n, item[v][1])
+            elif op == '>':
+                inside = (n + 1, item[v][1])
+                outside = (item[v][0], n)
+
+            if inside[0] <= inside[1]:
+                new_item = dict(item)
+                new_item[v] = inside
+                variations += count_variations(workflows, new_item, w)
+
+            if outside[0] <= outside[1]:
+                item[v] = outside
+            else:
+                break
+
+    return variations
+
+
+def solve_p2():
+    workflows, _ = parse()
+
+    item = {
+        'x': (1, 4000),
+        'm': (1, 4000),
+        'a': (1, 4000),
+        's': (1, 4000)
+    }
+
+    variations = count_variations(workflows, item, 'in')
+    print('Part 2:', variations)
 
 
 solve_p1()
